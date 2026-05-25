@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "nexushr.fullname" . }}-config
+  labels:
+    app: {{ include "nexushr.name" . }}
+data:
+  SPRING_PROFILES_ACTIVE: {{ .Values.backend.env.springProfile | quote }}
+  SPRING_DATASOURCE_URL: "jdbc:postgresql://{{ include "nexushr.fullname" . }}-postgres:{{ .Values.postgres.port }}/{{ .Values.postgres.db }}"
+  SPRING_DATA_REDIS_HOST: "{{ include "nexushr.fullname" . }}-redis"
+  SPRING_DATA_REDIS_PORT: {{ .Values.redis.port | quote }}
+  SPRING_AI_OPENAI_API_KEY: {{ .Values.backend.env.openaiApiKey | quote }}

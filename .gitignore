@@ -1,0 +1,66 @@
+# ─── Java / Maven ───
+target/
+*.class
+*.jar
+*.war
+*.ear
+*.log
+*.iml
+.idea/
+*.ipr
+*.iws
+.classpath
+.project
+.settings/
+.factorypath
+/bin/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+# ─── Node / React ───
+frontend/node_modules/
+frontend/dist/
+frontend/.env.local
+frontend/.env.*.local
+
+# ─── Python ───
+ai-sidecar/__pycache__/
+ai-sidecar/*.pyc
+ai-sidecar/.venv/
+ai-sidecar/venv/
+*.egg-info/
+
+# ─── Docker ───
+docker/data/
+
+# ─── Environment ───
+.env
+.env.local
+.env.production
+*.env
+
+# ─── OS ───
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# ─── IDE ───
+.vscode/
+.idea/
+*.iml
+
+# ─── Test / Coverage ───
+coverage/
+*.lcov
+htmlcov/
+.coverage
+
+# ─── Logs ───
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

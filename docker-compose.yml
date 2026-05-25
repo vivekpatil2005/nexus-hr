@@ -1,0 +1,114 @@
+version: '3.9'
+
+services:
+  # ─── PostgreSQL 17 with PgVector ───
+  postgres:
+    image: pgvector/pgvector:pg17
+    container_name: nexushr-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: nexushr
+      POSTGRES_USER: nexushr
+      POSTGRES_PASSWORD: nexushr_dev_2026
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init-extensions.sql:/docker-entrypoint-initdb.d/01-init-extensions.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nexushr"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - nexushr-network
+
+  # ─── Redis 7 ───
+  redis:
+    image: redis:7-alpine
+    container_name: nexushr-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - nexushr-network
+
+  # ─── MinIO (S3-compatible storage) ───
+  minio:
+    image: minio/minio:latest
+    container_name: nexushr-minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: nexushr_admin
+      MINIO_ROOT_PASSWORD: nexushr_minio_2026
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - nexushr-network
+
+  # ─── MailHog (Email testing) ───
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: nexushr-mailhog
+    ports:
+      - "1025:1025"   # SMTP
+      - "8025:8025"   # Web UI
+    networks:
+      - nexushr-network
+
+  # ─── Prometheus ───
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: nexushr-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.retention.time=15d'
+    networks:
+      - nexushr-network
+
+  # ─── Grafana ───
+  grafana:
+    image: grafana/grafana:latest
+    container_name: nexushr-grafana
+    ports:
+      - "3001:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: nexushr_grafana
+      GF_USERS_ALLOW_SIGN_UP: false
+    volumes:
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - prometheus
+    networks:
+      - nexushr-network
+
+volumes:
+  postgres_data:
+  redis_data:
+  minio_data:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  nexushr-network:
+    driver: bridge

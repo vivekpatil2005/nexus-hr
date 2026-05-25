@@ -1,0 +1,128 @@
+.zoom-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 0.25rem;
+}
+.zoom-level {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  min-width: 40px;
+  text-align: center;
+}
+
+.org-chart-container {
+  min-height: 400px;
+  overflow: hidden;
+}
+
+.org-chart-scroll {
+  overflow: auto;
+  padding: 2rem;
+  max-height: 70vh;
+}
+
+.org-chart-tree {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.2s ease;
+}
+
+/* ── Node ── */
+.org-node-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.org-node {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: var(--color-surface-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  min-width: 180px;
+  transition: all 0.2s ease;
+  cursor: default;
+}
+.org-node:hover {
+  border-color: rgba(124, 58, 237, 0.4);
+  box-shadow: var(--shadow-glow);
+  transform: translateY(-2px);
+}
+
+.org-node-info {
+  min-width: 0;
+}
+.org-node-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+.org-node-title {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+.org-node-dept {
+  font-size: 0.7rem;
+  color: var(--color-primary-hover);
+  margin-top: 1px;
+}
+
+/* ── Connectors ── */
+.org-children {
+  display: flex;
+  gap: 1.5rem;
+  padding-top: 1.5rem;
+  position: relative;
+}
+
+.org-children::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 1px;
+  height: 1.5rem;
+  background: var(--color-border);
+}
+
+.org-children > .org-node-wrapper {
+  position: relative;
+}
+
+.org-children > .org-node-wrapper::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 50%;
+  width: 1px;
+  height: 0;
+  background: var(--color-border);
+}
+
+/* Horizontal line connecting siblings */
+.org-children > .org-node-wrapper:not(:only-child)::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--color-border);
+}
+
+.org-children > .org-node-wrapper:first-child::after {
+  left: 50%;
+}
+
+.org-children > .org-node-wrapper:last-child::after {
+  right: 50%;
+}

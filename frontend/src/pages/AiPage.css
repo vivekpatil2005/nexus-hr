@@ -1,0 +1,504 @@
+/* ═══════════════════════════════════════════════════
+   AI Workforce Intelligence Styles
+   ═══════════════════════════════════════════════════ */
+
+.ai-section {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Stats section */
+.ai-stats {
+  margin-bottom: 2rem;
+  gap: 1.25rem;
+}
+
+/* Attrition Matrix Table & Cards */
+.table-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  padding: 1.5rem;
+}
+
+.table-card .card-header {
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.employee-info-cell {
+  display: flex;
+  flex-direction: column;
+}
+
+.employee-info-cell .emp-name {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.employee-info-cell .emp-id-label {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  margin-top: 2px;
+}
+
+.retention-pct-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  width: 150px;
+}
+
+.retention-pct-cell .pct-value {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.pct-bar-bg {
+  width: 100%;
+  height: 6px;
+  background: var(--color-border-subtle);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.pct-bar {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width 0.4s ease;
+}
+
+.pct-bar.green {
+  background: var(--color-success);
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+}
+
+.pct-bar.amber {
+  background: var(--color-warning);
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.4);
+}
+
+.pct-bar.red {
+  background: var(--color-danger);
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.4);
+}
+
+/* Feature tags */
+.feature-tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  max-width: 320px;
+}
+
+.feature-tag {
+  font-size: 0.72rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+}
+
+.feature-tag.red {
+  background: rgba(239, 68, 68, 0.08);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.15);
+}
+
+.feature-tag.amber {
+  background: rgba(245, 158, 11, 0.08);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.15);
+}
+
+.feature-tag.green {
+  background: rgba(16, 185, 129, 0.08);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.15);
+}
+
+/* Skill Gaps Layout */
+.skills-layout-grid {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.skills-selector-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  padding: 1.5rem;
+}
+
+.skills-selector-card h3 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.locked-employee-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--color-border);
+  margin-top: 1rem;
+}
+
+.locked-employee-info .avatar {
+  width: 42px;
+  height: 42px;
+  background: var(--gradient-primary);
+  color: white;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.locked-employee-info .name {
+  font-weight: 600;
+  color: var(--color-text);
+  font-size: 0.95rem;
+}
+
+.locked-employee-info .role {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  display: block;
+}
+
+.skill-summary-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  border-top: 1px solid var(--color-border-subtle);
+  padding-top: 1.25rem;
+}
+
+.skill-summary-stats .stat-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+}
+
+.skill-summary-stats .stat-row .lbl {
+  color: var(--color-text-secondary);
+}
+
+.skill-summary-stats .stat-row .val {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.skills-graph-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  padding: 1.75rem;
+}
+
+.skills-graph-card .graph-header {
+  margin-bottom: 1.5rem;
+}
+
+.recommendations-container {
+  border-top: 1px solid var(--color-border);
+  padding-top: 1.75rem;
+}
+
+.recommendations-container .section-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.1rem;
+  margin-bottom: 0.25rem;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.recommendation-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  margin-top: 1.25rem;
+}
+
+.recommendation-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.recommendation-item:hover {
+  background: rgba(124, 58, 237, 0.03);
+  border-color: rgba(124, 58, 237, 0.2);
+  transform: translateX(2px);
+}
+
+.recommendation-item.completed {
+  background: rgba(16, 185, 129, 0.03);
+  border-color: rgba(16, 185, 129, 0.2);
+  opacity: 0.75;
+}
+
+.recommendation-item.completed span {
+  text-decoration: line-through;
+  color: var(--color-text-muted);
+}
+
+.btn-check {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.uncheck-icon {
+  color: var(--color-text-muted);
+}
+
+.check-icon {
+  color: var(--color-success);
+}
+
+/* Chatbot Styles */
+.chat-card-wrapper {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 220px);
+  min-height: 500px;
+  padding: 0;
+  overflow: hidden;
+}
+
+.chat-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: rgba(255, 255, 255, 0.01);
+}
+
+.chat-header .bot-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-full);
+  background: rgba(124, 58, 237, 0.15);
+  color: var(--color-primary-hover);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 12px var(--color-primary-glow);
+}
+
+.chat-header h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.chat-header .status-label {
+  font-size: 0.75rem;
+  color: var(--color-success);
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.chat-header .status-label::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-success);
+  display: inline-block;
+  box-shadow: 0 0 6px var(--color-success);
+}
+
+.chat-messages-area {
+  flex: 1;
+  padding: 1.5rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.chat-message {
+  display: flex;
+  width: 100%;
+}
+
+.chat-message.user {
+  justify-content: flex-end;
+}
+
+.chat-message.assistant {
+  justify-content: flex-start;
+}
+
+.message-bubble {
+  max-width: 75%;
+  padding: 1rem 1.25rem;
+  border-radius: var(--radius-lg);
+  font-size: 0.9rem;
+  line-height: 1.55;
+  box-shadow: var(--shadow-sm);
+}
+
+.chat-message.user .message-bubble {
+  background: var(--gradient-primary);
+  color: white;
+  border-bottom-right-radius: 2px;
+}
+
+.chat-message.assistant .message-bubble {
+  background: var(--color-surface-hover);
+  border: 1px solid var(--color-border-subtle);
+  color: var(--color-text-secondary);
+  border-bottom-left-radius: 2px;
+}
+
+.message-meta {
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+  margin-top: 0.65rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 0.4rem;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.source-badge {
+  background: rgba(255, 255, 255, 0.06);
+  padding: 0.1rem 0.35rem;
+  border-radius: var(--radius-sm);
+  font-family: monospace;
+  font-size: 0.68rem;
+  color: var(--color-text-muted);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+/* Chat Input Bar */
+.chat-input-form {
+  padding: 1.25rem;
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  gap: 0.75rem;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.chat-input {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.02) !important;
+  border-color: var(--color-border) !important;
+  color: var(--color-text);
+  border-radius: var(--radius-full) !important;
+  padding: 0.75rem 1.5rem !important;
+}
+
+.chat-input:focus {
+  border-color: var(--color-primary-hover) !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+}
+
+.chat-send-btn {
+  border-radius: var(--radius-full) !important;
+  width: 44px;
+  height: 44px;
+  padding: 0 !important;
+  flex-shrink: 0;
+}
+
+/* Typing Indicator Animation */
+.typing-bubble {
+  padding: 0.85rem 1.25rem !important;
+}
+
+.typing-indicator {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 18px;
+}
+
+.typing-indicator span {
+  width: 6px;
+  height: 6px;
+  background: var(--color-text-muted);
+  border-radius: 50%;
+  animation: typingBounce 1.2s infinite ease-in-out;
+}
+
+.typing-indicator span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-indicator span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes typingBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); background: var(--color-primary-hover); }
+}
+
+/* Spin animation for refresh button */
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  100% { transform: rotate(360deg); }
+}
+
+/* Inline chat markdown styles */
+.chat-h2, .chat-h3, .chat-h4 {
+  color: var(--color-text);
+  font-weight: 700;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.chat-h2 { font-size: 1.25rem; }
+.chat-h3 { font-size: 1.1rem; }
+.chat-h4 { font-size: 0.95rem; }
+
+.chat-p {
+  margin-bottom: 0.75rem;
+}
+
+.chat-p:last-child {
+  margin-bottom: 0;
+}
+
+.chat-li {
+  margin-left: 1.25rem;
+  list-style-type: disc;
+  margin-bottom: 0.35rem;
+}
+
+.chat-li-numbered {
+  margin-left: 1.25rem;
+  list-style-type: decimal;
+  margin-bottom: 0.35rem;
+}

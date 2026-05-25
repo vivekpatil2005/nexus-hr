@@ -1,0 +1,63 @@
+# Default values for nexushr.
+
+replicaCount: 1
+
+image:
+  pullPolicy: IfNotPresent
+  # Overrides the image tag, defaults to Chart appVersion
+  tag: "latest"
+
+backend:
+  name: backend
+  repository: nexushr-backend
+  port: 8080
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1024Mi
+    requests:
+      cpu: 250m
+      memory: 512Mi
+  env:
+    springProfile: "prod"
+    jwtSecret: "NexusHR-2026-Super-Secret-JWT-Signing-Key-Must-Be-At-Least-512-Bits-Long-For-HS512-Algorithm-Production-Change-This"
+    openaiApiKey: "mock-key"
+
+frontend:
+  name: frontend
+  repository: nexushr-frontend
+  port: 80
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+
+postgres:
+  enabled: true
+  name: postgres
+  image: pgvector/pgvector:pg17
+  port: 5432
+  db: nexushr
+  user: nexushr
+  password: nexushr_dev_2026
+  persistence:
+    size: 2Gi
+
+redis:
+  enabled: true
+  name: redis
+  image: redis:7-alpine
+  port: 6379
+
+ingress:
+  enabled: false
+  className: "nginx"
+  annotations: {}
+  hosts:
+    - host: nexushr.local
+      paths:
+        - path: /
+          pathType: Prefix

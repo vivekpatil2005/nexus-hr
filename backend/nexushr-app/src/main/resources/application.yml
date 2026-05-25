@@ -1,0 +1,168 @@
+# ╔══════════════════════════════════════════════════════════════════╗
+# ║                    NexusHR Application Configuration            ║
+# ║         AI-Enabled Enterprise HR & Workforce Intelligence       ║
+# ╚══════════════════════════════════════════════════════════════════╝
+
+spring:
+  application:
+    name: nexushr
+
+  # ─── Spring AI ───
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY:mock-key}
+
+  # ─── Database ───
+  datasource:
+    url: jdbc:postgresql://localhost:5432/nexushr
+    username: nexushr
+    password: nexushr_dev_2026
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      idle-timeout: 300000
+      connection-timeout: 20000
+      max-lifetime: 1200000
+
+  # ─── JPA / Hibernate ───
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+        default_schema: public
+        jdbc:
+          time_zone: UTC
+          batch_size: 25
+        order_inserts: true
+        order_updates: true
+
+  # ─── Flyway ───
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    validate-on-migrate: true
+
+  # ─── Redis ───
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 5000
+
+  # ─── Mail (MailHog for dev) ───
+  mail:
+    host: localhost
+    port: 1025
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+
+  # ─── Jackson ───
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    deserialization:
+      fail-on-unknown-properties: false
+    default-property-inclusion: non_null
+
+  # ─── Spring Batch ───
+  batch:
+    jdbc:
+      initialize-schema: always
+    job:
+      enabled: false   # Don't auto-run batch jobs on startup
+
+  # ─── Servlet ───
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 50MB
+
+  # ─── Virtual Threads (Java 21) ───
+  threads:
+    virtual:
+      enabled: true
+
+# ─── Server ───
+server:
+  port: 8080
+  error:
+    include-message: always
+    include-binding-errors: always
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/plain
+
+# ─── NexusHR Custom Properties ───
+nexushr:
+  jwt:
+    secret: NexusHR-2026-Super-Secret-JWT-Signing-Key-Must-Be-At-Least-512-Bits-Long-For-HS512-Algorithm-Production-Change-This
+    access-token-expiration-ms: 900000       # 15 minutes
+    refresh-token-expiration-ms: 604800000   # 7 days
+  cors:
+    allowed-origins: http://localhost:5173,http://localhost:3000
+  storage:
+    type: minio
+    endpoint: http://localhost:9000
+    access-key: nexushr_admin
+    secret-key: nexushr_minio_2026
+    bucket: nexushr-documents
+
+# ─── Actuator & Monitoring ───
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,flyway,env
+  endpoint:
+    health:
+      show-details: when_authorized
+  metrics:
+    tags:
+      application: nexushr
+
+# ─── OpenAPI / Swagger ───
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+  show-actuator: false
+
+# ─── Logging ───
+logging:
+  level:
+    com.nexushr: DEBUG
+    org.springframework.security: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    org.flywaydb: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+
+---
+# ─── Production Profile ───
+spring:
+  config:
+    activate:
+      on-profile: prod
+  jpa:
+    show-sql: false
+  datasource:
+    hikari:
+      maximum-pool-size: 50
+logging:
+  level:
+    com.nexushr: INFO
+    org.hibernate.SQL: WARN

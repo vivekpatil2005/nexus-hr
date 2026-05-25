@@ -1,0 +1,64 @@
+{{- if .Values.postgres.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "nexushr.fullname" . }}-postgres
+  labels:
+    app: {{ include "nexushr.name" . }}
+    component: postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "nexushr.name" . }}
+      component: postgres
+  template:
+    metadata:
+      labels:
+        app: {{ include "nexushr.name" . }}
+        component: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: {{ .Values.postgres.image }}
+          ports:
+            - containerPort: {{ .Values.postgres.port }}
+              name: postgres
+          env:
+            - name: POSTGRES_DB
+              value: {{ .Values.postgres.db }}
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "nexushr.fullname" . }}-secrets
+                  key: SPRING_DATASOURCE_USERNAME
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "nexushr.fullname" . }}-secrets
+                  key: SPRING_DATASOURCE_PASSWORD
+          # Simple check to see if pg_isready succeeds
+          livenessProbe:
+            exec:
+              command:
+                - pg_isready
+                - -U
+                - {{ .Values.postgres.user }}
+            initialDelaySeconds: 15
+            periodSeconds: 15
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "nexushr.fullname" . }}-postgres
+  labels:
+    app: {{ include "nexushr.name" . }}
+    component: postgres
+spec:
+  ports:
+    - port: {{ .Values.postgres.port }}
+      targetPort: postgres
+  selector:
+    app: {{ include "nexushr.name" . }}
+    component: postgres
+{{- end }}

@@ -1,0 +1,6 @@
+apiVersion: v2
+name: nexushr
+description: A Helm chart for NexusHR - AI-Enabled Enterprise HR & Workforce Intelligence Platform
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
