@@ -20,6 +20,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.context.ApplicationEventPublisher;
+import com.nexushr.common.event.UserRegisteredEvent;
 
 import java.time.Instant;
 import java.util.Set;
@@ -44,17 +46,20 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
+    private final ApplicationEventPublisher eventPublisher;
 
     public AuthService(UserRepository userRepository,
                        RefreshTokenRepository refreshTokenRepository,
                        PasswordEncoder passwordEncoder,
                        AuthenticationManager authenticationManager,
-                       JwtTokenProvider jwtTokenProvider) {
+                       JwtTokenProvider jwtTokenProvider,
+                       ApplicationEventPublisher eventPublisher) {
         this.userRepository = userRepository;
         this.refreshTokenRepository = refreshTokenRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.eventPublisher = eventPublisher;
     }
 
     /**
@@ -91,6 +96,9 @@ public class AuthService {
 
         user = userRepository.save(user);
         log.info("New user registered: username={}, roles={}", user.getUsername(), roles);
+
+        // Publish event to generate corresponding Employee profile
+        eventPublisher.publishEvent(new UserRegisteredEvent(user.getId(), user.getUsername(), user.getEmail(), user.getFullName()));
 
         // Generate tokens
         Set<String> roleNames = roles.stream().map(Enum::name).collect(Collectors.toSet());
@@ -293,7 +301,7 @@ public class AuthService {
      */
     private Set<Role> resolveRoles(Set<String> roleNames) {
         if (roleNames == null || roleNames.isEmpty()) {
-            return Set.of(Role.EMPLOYEE);
+            return new java.util.HashSet<>(java.util.Set.of(Role.EMPLOYEE));
         }
 
         return roleNames.stream()
@@ -304,6 +312,6 @@ public class AuthService {
                         throw new IllegalArgumentException("Invalid role: " + name);
                     }
                 })
-                .collect(Collectors.toSet());
+                .collect(Collectors.toCollection(java.util.HashSet::new));
     }
 }

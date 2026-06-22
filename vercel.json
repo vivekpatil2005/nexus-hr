@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/api/:path*",
+      "destination": "https://nexushr-backend.onrender.com/api/:path*"
+    },
+    {
       "source": "/((?!assets/|favicon.ico|vite.svg|.*\\.png|.*\\.json).*)$",
       "destination": "/index.html"
     }
