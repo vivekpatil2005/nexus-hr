@@ -36,7 +36,7 @@ FROM eclipse-temurin:21-jre
 WORKDIR /app
 
 # Create a non-root user and group
-RUN addgroup -S nexushr && adduser -S nexushr -G nexushr
+RUN groupadd -r nexushr && useradd -r -g nexushr nexushr
 
 # Copy the built jar from the builder stage
 COPY --from=builder /build/nexushr-app/target/nexushr-app-1.0.0-SNAPSHOT.jar app.jar
