@@ -49,7 +49,20 @@ public class JwtTokenProvider {
 
     @PostConstruct
     public void init() {
-        signingKey = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
+        byte[] keyBytes = jwtSecret.getBytes(StandardCharsets.UTF_8);
+        if (keyBytes.length < 64) {
+            log.info("JWT secret is less than 512 bits. Hashing it with SHA-512 to ensure a secure key size.");
+            try {
+                java.security.MessageDigest digest = java.security.MessageDigest.getInstance("SHA-512");
+                keyBytes = digest.digest(keyBytes);
+            } catch (java.security.NoSuchAlgorithmException e) {
+                log.error("SHA-512 digest algorithm not available. Falling back to key padding.", e);
+                byte[] paddedBytes = new byte[64];
+                System.arraycopy(keyBytes, 0, paddedBytes, 0, Math.min(keyBytes.length, 64));
+                keyBytes = paddedBytes;
+            }
+        }
+        signingKey = Keys.hmacShaKeyFor(keyBytes);
     }
 
     /**
