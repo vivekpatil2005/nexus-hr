@@ -41,6 +41,20 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Handles illegal argument and state exceptions.
+     *
+     * @param ex the exception
+     * @return 400 response with error details
+     */
+    @ExceptionHandler({IllegalArgumentException.class, IllegalStateException.class})
+    public ResponseEntity<ApiResponse<Object>> handleIllegalArgument(RuntimeException ex) {
+        log.warn("Bad request: {}", ex.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.error(ex.getMessage()));
+    }
+
+    /**
      * Handles resource not found exceptions.
      *
      * @param ex the exception
