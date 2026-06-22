@@ -11,11 +11,10 @@ services:
     plan: free
     ipAllowList: []
 
-  # JVM Web Service
+  # JVM Web Service (combined Frontend + Backend)
   - type: web
     name: nexushr-backend
     runtime: docker
-    rootDir: backend
     dockerfilePath: Dockerfile
     dockerContext: .
     plan: free
@@ -57,6 +56,6 @@ services:
       # JWT Encryption Key (Render auto-generates a secure 256-bit string)
       - key: NEXUSHR_JWT_SECRET
         generateValue: true
-      # Allowed origins (Vercel Frontend URL)
+      # Allowed origins (Served from same host, but add self and local origins for developer safety)
       - key: NEXUSHR_CORS_ALLOWED_ORIGINS
-        value: https://frontend-lake-one-39.vercel.app,https://frontend-kab41vhk4-ignite-x1.vercel.app
+        value: http://localhost:5173,http://localhost:3000
