@@ -84,3 +84,87 @@ The suite verifies:
 * Error toast feedback on bad credentials.
 * Navigation and card elements rendering on the dashboard.
 * Main dashboard elements and sidebar logout actions.
+
+---
+
+## 5. Cloud Deployment (Render & Railway)
+
+To deploy the entire platform in a live production environment, follow these instructions to provision database and cache instances, run the JVM container backend, and link your frontend.
+
+### Option A: Railway (Recommended)
+
+Railway is recommended because it manages database, Redis cache, and backend service networking under a single unified project workspace.
+
+#### Step 1: Initialize Project
+1. Log in to [Railway.app](https://railway.app).
+2. Click **New Project** ➜ **Deploy from GitHub repo** and select your `nexus-hr` repository.
+
+#### Step 2: Add Databases
+1. In your project page, click **+ New** ➜ **Database** ➜ **Add PostgreSQL**.
+2. Click **+ New** ➜ **Database** ➜ **Add Redis**.
+
+#### Step 3: Configure Backend Service
+1. Click the GitHub repo card service.
+2. Under **Settings** ➜ **General**, set the **Root Directory** to `backend`.
+3. Under **Variables**, add the following environment variables (Railway will automatically inject internal connection variables from the PostgreSQL and Redis services):
+   ```env
+   PORT=8080
+   SPRING_PROFILES_ACTIVE=prod
+   SPRING_DATASOURCE_URL=jdbc:postgresql://${{Postgres.DATABASE_HOST}}:${{Postgres.DATABASE_PORT}}/${{Postgres.DATABASE_NAME}}
+   SPRING_DATASOURCE_USERNAME=${{Postgres.DATABASE_USER}}
+   SPRING_DATASOURCE_PASSWORD=${{Postgres.DATABASE_PASSWORD}}
+   SPRING_DATA_REDIS_HOST=${{Redis.REDIS_HOST}}
+   SPRING_DATA_REDIS_PORT=${{Redis.REDIS_PORT}}
+   SPRING_DATA_REDIS_PASSWORD=${{Redis.REDIS_PASSWORD}}
+   NEXUSHR_JWT_SECRET=<your-super-long-secure-random-string-at-least-512-bits>
+   NEXUSHR_CORS_ALLOWED_ORIGINS=https://<your-vercel-domain-url>
+   ```
+4. Under **Settings** ➜ **Networking**, click **Generate Domain** to get your public API URL (e.g. `https://nexus-hr-backend.up.railway.app`).
+
+---
+
+### Option B: Render Deployment
+
+Render provides a scalable cloud environment for running Dockerized web services.
+
+#### Step 1: Provision Databases
+1. Log in to [Render.com](https://render.com).
+2. Click **New** ➜ **PostgreSQL**:
+   - Database Name: `nexushr`
+   - User: `nexushr`
+   - Copy the **Internal Database URL** once provisioned.
+3. Click **New** ➜ **Redis**:
+   - Copy the **Internal Redis URL**.
+
+#### Step 2: Create Web Service
+1. Click **New** ➜ **Web Service** and connect your `nexus-hr` repository.
+2. Configure the service:
+   - **Name**: `nexushr-backend`
+   - **Environment**: `Docker`
+   - **Root Directory**: `backend` (Points to the Java folder containing `Dockerfile`)
+   - **Dockerfile Path**: `Dockerfile`
+3. Click **Advanced** ➜ **Add Environment Variable**:
+   * `SPRING_PROFILES_ACTIVE` = `prod`
+   * `SPRING_DATASOURCE_URL` = `<Your Postgres Internal Database URL>` (Ensure protocol is `jdbc:postgresql://` instead of `postgres://`)
+   * `SPRING_DATASOURCE_USERNAME` = `nexushr`
+   * `SPRING_DATASOURCE_PASSWORD` = `<Your Postgres Password>`
+   * `SPRING_DATA_REDIS_HOST` = `<Your Redis Host>` (extracted from your Redis internal URL)
+   * `SPRING_DATA_REDIS_PORT` = `6379`
+   * `NEXUSHR_JWT_SECRET` = `<Your Long Secret String>`
+   * `NEXUSHR_CORS_ALLOWED_ORIGINS` = `https://<your-vercel-domain-url>`
+4. Deploy the service to obtain your public endpoint (e.g. `https://nexushr-backend.onrender.com`).
+
+---
+
+## 6. Linking Vercel Frontend to Production Backend
+
+To direct your live Vercel frontend to the production backend:
+
+1. Open your **Vercel Project Dashboard**.
+2. Go to **Settings** ➜ **Environment Variables**.
+3. Create/Edit the `VITE_API_BASE_URL` environment variable:
+   - **Key**: `VITE_API_BASE_URL`
+   - **Value**: `https://<your-backend-domain-url>/api`
+   - **Target**: Check *Production*, *Preview*, and *Development*.
+4. Under the **Deployments** tab on Vercel, select the latest production build and click **Redeploy** (with "Use existing Build Cache" unchecked) to compile the Vite application with the live API base URL configuration.
+

@@ -14,9 +14,9 @@ spring:
 
   # ─── Database ───
   datasource:
-    url: jdbc:postgresql://localhost:5432/nexushr
-    username: nexushr
-    password: nexushr_dev_2026
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://${SPRING_DATASOURCE_HOST:localhost}:${SPRING_DATASOURCE_PORT:5432}/${SPRING_DATASOURCE_DB:nexushr}}
+    username: ${SPRING_DATASOURCE_USERNAME:nexushr}
+    password: ${SPRING_DATASOURCE_PASSWORD:nexushr_dev_2026}
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 20
@@ -51,8 +51,9 @@ spring:
   # ─── Redis ───
   data:
     redis:
-      host: localhost
-      port: 6379
+      host: ${SPRING_DATA_REDIS_HOST:localhost}
+      port: ${SPRING_DATA_REDIS_PORT:6379}
+      password: ${SPRING_DATA_REDIS_PASSWORD:}
       timeout: 5000
 
   # ─── Mail (MailHog for dev) ───

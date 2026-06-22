@@ -1,0 +1,65 @@
+databases:
+  - name: nexushr-db
+    databaseName: nexushr
+    user: nexushr
+    plan: free
+
+services:
+  # Redis Cache service (Render's new keyvalue type)
+  - type: keyvalue
+    name: nexushr-redis
+    plan: free
+
+  # JVM Web Service
+  - type: web
+    name: nexushr-backend
+    runtime: docker
+    dockerfilePath: Dockerfile
+    dockerContext: backend
+    plan: free
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      # Database connection configuration (Spring combines these via properties placeholders)
+      - key: SPRING_DATASOURCE_HOST
+        fromDatabase:
+          name: nexushr-db
+          property: host
+      - key: SPRING_DATASOURCE_PORT
+        fromDatabase:
+          name: nexushr-db
+          property: port
+      - key: SPRING_DATASOURCE_DB
+        fromDatabase:
+          name: nexushr-db
+          property: database
+      - key: SPRING_DATASOURCE_USERNAME
+        fromDatabase:
+          name: nexushr-db
+          property: user
+      - key: SPRING_DATASOURCE_PASSWORD
+        fromDatabase:
+          name: nexushr-db
+          property: password
+      # Redis Connection properties
+      - key: SPRING_DATA_REDIS_HOST
+        fromService:
+          type: keyvalue
+          name: nexushr-redis
+          property: host
+      - key: SPRING_DATA_REDIS_PORT
+        fromService:
+          type: keyvalue
+          name: nexushr-redis
+          property: port
+      - key: SPRING_DATA_REDIS_PASSWORD
+        fromService:
+          type: keyvalue
+          name: nexushr-redis
+          property: password
+      # JWT Encryption Key (Render auto-generates a secure 256-bit string)
+      - key: NEXUSHR_JWT_SECRET
+        generateValue: true
+      # Allowed origins (Vercel Frontend URL)
+      - key: NEXUSHR_CORS_ALLOWED_ORIGINS
+        value: https://frontend-lake-one-39.vercel.app,https://frontend-kab41vhk4-ignite-x1.vercel.app

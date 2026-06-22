@@ -39,7 +39,7 @@ WORKDIR /app
 RUN groupadd -r nexushr && useradd -r -g nexushr nexushr
 
 # Copy the built jar from the builder stage
-COPY --from=builder /build/nexushr-app/target/nexushr-app-1.0.0-SNAPSHOT.jar app.jar
+COPY --from=builder /build/nexushr-app/target/*.jar app.jar
 
 # Adjust permissions
 RUN chown -R nexushr:nexushr /app
@@ -51,4 +51,4 @@ USER nexushr
 EXPOSE 8080
 
 # Run JVM with optimal settings for virtual threads and cloud container deployment
-ENTRYPOINT ["java", "-XX:+UseG1GC", "-XX:MaxRAMPercentage=75.0", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
