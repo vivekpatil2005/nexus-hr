@@ -121,7 +121,11 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(allowedOrigins);
+        java.util.List<String> origins = new java.util.ArrayList<>(allowedOrigins);
+        if (!origins.contains("https://nexus-hr-mu.vercel.app")) {
+            origins.add("https://nexus-hr-mu.vercel.app");
+        }
+        configuration.setAllowedOrigins(origins);
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setExposedHeaders(List.of("Authorization"));
