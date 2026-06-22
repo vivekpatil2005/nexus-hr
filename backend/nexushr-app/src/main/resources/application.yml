@@ -110,7 +110,7 @@ nexushr:
     access-token-expiration-ms: 900000       # 15 minutes
     refresh-token-expiration-ms: 604800000   # 7 days
   cors:
-    allowed-origins: http://localhost:5173,http://localhost:3000
+    allowed-origins: http://localhost:5173,http://localhost:3000,https://nexus-hr-mu.vercel.app
   storage:
     type: minio
     endpoint: http://localhost:9000

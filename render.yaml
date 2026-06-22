@@ -58,4 +58,4 @@ services:
         generateValue: true
       # Allowed origins (Served from same host, but add self and local origins for developer safety)
       - key: NEXUSHR_CORS_ALLOWED_ORIGINS
-        value: http://localhost:5173,http://localhost:3000
+        value: http://localhost:5173,http://localhost:3000,https://nexus-hr-mu.vercel.app
