@@ -1,5 +1,5 @@
 # ─── Stage 1: Build ───
-FROM maven:3.9.9-eclipse-temurin-21-alpine AS builder
+FROM maven:3.9.9-eclipse-temurin-21 AS builder
 WORKDIR /build
 
 # Copy Maven parent POM first to cache dependencies
@@ -32,7 +32,7 @@ COPY nexushr-app/src nexushr-app/src
 RUN mvn clean package -pl nexushr-app -am -DskipTests
 
 # ─── Stage 2: Production JRE ───
-FROM eclipse-temurin:21-jre-alpine
+FROM eclipse-temurin:21-jre
 WORKDIR /app
 
 # Create a non-root user and group
