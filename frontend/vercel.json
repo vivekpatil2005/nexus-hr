@@ -1,4 +1,6 @@
 {
+  "buildCommand": "npm install @rolldown/binding-linux-x64-gnu --no-save --force && tsc -b && npx vite build",
+  "outputDirectory": "dist",
   "rewrites": [
     {
       "source": "/api/:path*",
