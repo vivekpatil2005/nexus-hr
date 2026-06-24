@@ -167,7 +167,7 @@ public class AuthController {
      * Retrieves a list of all users.
      */
     @GetMapping("/users")
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'HR_MANAGER', 'MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR_MANAGER', 'MANAGER')")
     @Operation(summary = "Get all users", description = "Returns a list of all user profiles (for admin/HR/manager use)")
     public ResponseEntity<ApiResponse<List<Map<String, Object>>>> getAllUsers() {
         List<Map<String, Object>> users = authService.getAllUsers().stream().map(user -> {
