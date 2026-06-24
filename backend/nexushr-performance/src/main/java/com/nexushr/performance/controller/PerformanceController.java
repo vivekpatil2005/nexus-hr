@@ -5,6 +5,8 @@ import com.nexushr.common.exception.ResourceNotFoundException;
 import com.nexushr.common.security.SecurityUtils;
 import com.nexushr.employee.entity.Employee;
 import com.nexushr.employee.repository.EmployeeRepository;
+import com.nexushr.auth.entity.User;
+import com.nexushr.auth.repository.UserRepository;
 import com.nexushr.performance.dto.*;
 import com.nexushr.performance.service.PerformanceService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,6 +28,7 @@ public class PerformanceController {
 
     private final PerformanceService performanceService;
     private final EmployeeRepository employeeRepository;
+    private final UserRepository userRepository;
 
     @GetMapping("/cycles")
     @Operation(summary = "Get all review cycles")
@@ -43,14 +46,17 @@ public class PerformanceController {
     @GetMapping("/reviews/me")
     @Operation(summary = "Get reviews for the currently logged in employee")
     public ResponseEntity<ApiResponse<List<ReviewResponse>>> getMyReviews() {
-        String email = SecurityUtils.getCurrentUsername()
+        String username = SecurityUtils.getCurrentUsername()
                 .orElseThrow(() -> new ResourceNotFoundException("Logged in user details not found", "username", "current"));
         
-        Employee employee = employeeRepository.findByEmail(email).orElse(null);
-        if (employee == null) {
+        User user = userRepository.findByUsername(username)
+                .or(() -> userRepository.findByEmail(username))
+                .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
+
+        if (user.getEmployeeId() == null) {
             return ResponseEntity.ok(ApiResponse.success("No employee profile linked to user", Collections.emptyList()));
         }
-        return ResponseEntity.ok(ApiResponse.success("Reviews retrieved successfully", performanceService.getReviewsByEmployee(employee.getId())));
+        return ResponseEntity.ok(ApiResponse.success("Reviews retrieved successfully", performanceService.getReviewsByEmployee(user.getEmployeeId())));
     }
 
     @GetMapping("/reviews/employee/{empId}")

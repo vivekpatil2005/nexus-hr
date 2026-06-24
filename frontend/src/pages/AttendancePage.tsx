@@ -171,7 +171,12 @@ export default function AttendancePage() {
     const token = localStorage.getItem('accessToken');
     if (!token) return;
 
-    const eventSource = new EventSource(`http://localhost:8080/api/attendance/stream?token=${token}`);
+    const baseApiUrl = import.meta.env.VITE_API_BASE_URL || (import.meta.env.PROD ? '' : 'http://localhost:8080');
+    const eventSourceUrl = baseApiUrl.startsWith('http') 
+      ? `${baseApiUrl}/api/attendance/stream?token=${token}`
+      : `${window.location.origin}${baseApiUrl}/api/attendance/stream?token=${token}`;
+
+    const eventSource = new EventSource(eventSourceUrl);
     sseRef.current = eventSource;
 
     eventSource.addEventListener('init', (e: MessageEvent) => {

@@ -12,10 +12,12 @@ const barColors = ['#7c3aed', '#6366f1', '#3b82f6', '#10b981', '#f59e0b', '#ef44
 export default function DashboardPage() {
   const { user, hasRole } = useAuth();
   const navigate = useNavigate();
+  const isManagerOrAdmin = hasRole('ADMIN') || hasRole('HR_MANAGER') || hasRole('MANAGER');
 
   const { data: statsData } = useQuery({
     queryKey: ['department-stats'],
     queryFn: () => api.get<{ data: Record<string, number> }>('/employees/stats').then(r => r.data.data),
+    enabled: isManagerOrAdmin,
   });
 
   const { data: recentEmployees } = useQuery({
@@ -23,6 +25,7 @@ export default function DashboardPage() {
     queryFn: () =>
       api.get<{ data: PagedResponse<EmployeeSummary> }>('/employees?size=5&sortBy=createdAt&sortDir=desc')
         .then(r => r.data.data),
+    enabled: isManagerOrAdmin,
   });
 
   const totalEmployees = statsData ? Object.values(statsData).reduce((a, b) => a + b, 0) : 0;
