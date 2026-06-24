@@ -1,5 +1,5 @@
 {
-  "installCommand": "rm -rf package-lock.json node_modules frontend/node_modules && npm install",
+  "buildCommand": "cd frontend && npm install @rolldown/binding-linux-x64-gnu --no-save --force && tsc -b && npx vite build",
   "rewrites": [
     {
       "source": "/api/:path*",
