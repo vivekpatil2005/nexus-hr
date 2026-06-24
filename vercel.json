@@ -1,4 +1,5 @@
 {
+  "installCommand": "rm -rf package-lock.json node_modules frontend/node_modules && npm install",
   "rewrites": [
     {
       "source": "/api/:path*",
