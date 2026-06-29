@@ -28,11 +28,11 @@ export default function Layout() {
   const navigate = useNavigate();
 
   const filteredNavItems = navItems.filter((item) => {
-    if (item.to === '/employees') {
+    if (item.to === '/employees' || item.to === '/ai' || item.to === '/announcements') {
       return hasRole('ADMIN') || hasRole('HR_MANAGER') || hasRole('MANAGER');
     }
-    if (item.to === '/ai') {
-      return hasRole('ADMIN') || hasRole('HR_MANAGER') || hasRole('MANAGER');
+    if (item.to === '/departments') {
+      return hasRole('ADMIN') || hasRole('HR_MANAGER');
     }
     return true;
   });
