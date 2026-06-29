@@ -1,5 +1,5 @@
 {
-  "buildCommand": "cd frontend && npm install @rolldown/binding-linux-x64-gnu --no-save --force --loglevel=error --no-fund --no-audit && tsc -b && npx vite build",
+  "buildCommand": "cd frontend && npm install @rolldown/binding-linux-x64-gnu --no-save --force > /dev/null 2>&1 && tsc -b && npx vite build",
   "outputDirectory": "frontend/dist",
   "rewrites": [
     {
