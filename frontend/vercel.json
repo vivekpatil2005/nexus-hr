@@ -1,5 +1,5 @@
 {
-  "buildCommand": "npm install @rolldown/binding-linux-x64-gnu --no-save --force > /dev/null 2>&1 && tsc -b && npx vite build",
+  "buildCommand": "npm install @rolldown/binding-linux-x64-gnu --no-save --loglevel=error --no-fund --no-audit && npm run build",
   "outputDirectory": "dist",
   "rewrites": [
     {
