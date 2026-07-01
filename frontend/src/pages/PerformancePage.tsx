@@ -413,12 +413,56 @@ export default function PerformancePage() {
           ) : !myReviews || myReviews.length === 0 ? (
             <div className="card empty-state">
               <AwardIcon size={48} />
-              <h3>No reviews cycles assigned</h3>
-              <p>You will see self and manager evaluations here once the cycle moves to evaluation state.</p>
+              <h3>No reviews found</h3>
+              <p>You can start your self evaluation if a cycle is active.</p>
+              {currentCycleId && (
+                <button
+                  className="btn btn-primary"
+                  style={{ marginTop: '1rem' }}
+                  onClick={() => {
+                    handleOpenReviewModal({
+                      id: 0,
+                      employeeId: empId,
+                      employeeName: user?.fullName || 'Me',
+                      reviewerId: empId,
+                      reviewerName: user?.fullName || 'Me',
+                      cycleId: currentCycleId,
+                      cycleName: cycles?.find(c => c.id === currentCycleId)?.name || 'Current Cycle',
+                      reviewType: 'SELF',
+                      status: 'DRAFT'
+                    } as any);
+                  }}
+                >
+                  Start Self Evaluation
+                </button>
+              )}
             </div>
           ) : (
-            <div className="reviews-list">
-              {myReviews.map((rev) => (
+            <div className="reviews-list-container">
+              {currentCycleId && !myReviews.some(r => r.reviewType === 'SELF' && r.cycleId === currentCycleId) && (
+                <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'flex-end' }}>
+                  <button
+                    className="btn btn-primary btn-sm"
+                    onClick={() => {
+                      handleOpenReviewModal({
+                        id: 0,
+                        employeeId: empId,
+                        employeeName: user?.fullName || 'Me',
+                        reviewerId: empId,
+                        reviewerName: user?.fullName || 'Me',
+                        cycleId: currentCycleId,
+                        cycleName: cycles?.find(c => c.id === currentCycleId)?.name || 'Current Cycle',
+                        reviewType: 'SELF',
+                        status: 'DRAFT'
+                      } as any);
+                    }}
+                  >
+                    + Start Self Evaluation
+                  </button>
+                </div>
+              )}
+              <div className="reviews-list">
+                {myReviews.map((rev) => (
                 <div key={rev.id} className="card review-item-card">
                   <div className="review-meta">
                     <div>
@@ -466,6 +510,7 @@ export default function PerformancePage() {
                   </div>
                 </div>
               ))}
+              </div>
             </div>
           )}
         </div>

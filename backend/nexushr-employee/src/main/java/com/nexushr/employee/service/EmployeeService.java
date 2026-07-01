@@ -137,6 +137,34 @@ public class EmployeeService {
     }
 
     /**
+     * Updates own profile details.
+     */
+    /**
+     * Updates own profile details.
+     */
+    @Transactional
+    public EmployeeResponse updateMyProfile(String username, com.nexushr.employee.dto.EmployeeProfileUpdateRequest request) {
+        // Find employee by email (assuming username is email or we need to find it)
+        // If username is not an email, this might fail, but usually in NexusHR login is by email
+        Employee employee = employeeRepository.findByEmail(username)
+                .orElseThrow(() -> new ResourceNotFoundException("Employee", "email", username));
+
+        if (request.getFirstName() != null) employee.setFirstName(request.getFirstName());
+        if (request.getLastName() != null) employee.setLastName(request.getLastName());
+        if (request.getEmail() != null && !request.getEmail().equals(employee.getEmail())) {
+            if (employeeRepository.existsByEmail(request.getEmail())) {
+                throw new DuplicateResourceException("Employee", "email", request.getEmail());
+            }
+            employee.setEmail(request.getEmail());
+        }
+        if (request.getPhone() != null) employee.setPhone(request.getPhone());
+
+        employee = employeeRepository.save(employee);
+        log.info("Updated own profile for employee: {} ({})", employee.getFullName(), employee.getEmpCode());
+        return toResponse(employee);
+    }
+
+    /**
      * Gets a single employee by ID.
      */
     @Transactional(readOnly = true)

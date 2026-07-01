@@ -61,6 +61,18 @@ public class EmployeeController {
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
+    @PutMapping("/me")
+    @PreAuthorize("hasAnyRole('EMPLOYEE', 'MANAGER', 'HR_MANAGER', 'ADMIN')")
+    @Operation(summary = "Update own profile")
+    public ResponseEntity<ApiResponse<EmployeeResponse>> updateMyProfile(
+            @Valid @RequestBody com.nexushr.employee.dto.EmployeeProfileUpdateRequest request) {
+        String username = com.nexushr.common.security.SecurityUtils.getCurrentUsername()
+                .orElseThrow(() -> new com.nexushr.common.exception.ResourceNotFoundException("User", "username", "current"));
+        
+        EmployeeResponse response = employeeService.updateMyProfile(username, request);
+        return ResponseEntity.ok(ApiResponse.success("Profile updated successfully", response));
+    }
+
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'HR_MANAGER', 'MANAGER')")
     @Operation(summary = "List employees with filters")

@@ -13,6 +13,33 @@ export default function SettingsPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  // Profile Edit State
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [profileLoading, setProfileLoading] = useState(false);
+  const [firstName, setFirstName] = useState(user?.fullName?.split(' ')[0] || '');
+  const [lastName, setLastName] = useState(user?.fullName?.split(' ').slice(1).join(' ') || '');
+  const [email, setEmail] = useState(user?.email || '');
+  const [phone, setPhone] = useState('');
+
+  const handleProfileSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setProfileLoading(true);
+    try {
+      await api.put('/employees/me', {
+        firstName,
+        lastName,
+        email,
+        phone,
+      });
+      toast.success('Profile updated successfully! You may need to log back in to see name changes everywhere.');
+      setIsEditingProfile(false);
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || 'Failed to update profile.');
+    } finally {
+      setProfileLoading(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -58,48 +85,85 @@ export default function SettingsPage() {
       <div className="settings-grid">
         {/* Profile Card */}
         <div className="card settings-card profile-section">
-          <div className="card-header">
+          <div className="card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <h3>
               <User size={18} /> User Profile
             </h3>
+            {!isEditingProfile && (
+              <button className="btn btn-secondary btn-sm" onClick={() => setIsEditingProfile(true)}>
+                Edit Profile
+              </button>
+            )}
           </div>
-          <div className="profile-details">
-            <div className="avatar-large">
-              {user?.fullName
-                ?.split(' ')
-                .map((n) => n[0])
-                .join('')
-                .substring(0, 2) ?? 'U'}
-            </div>
-            <div className="profile-info">
-              <h2>{user?.fullName}</h2>
-              <p className="email">{user?.email}</p>
-              <div className="roles-badges">
-                {user?.roles?.map((role) => (
-                  <span key={role} className="badge badge-role">
-                    {role.replace('ROLE_', '')}
-                  </span>
-                ))}
+          
+          {isEditingProfile ? (
+            <form onSubmit={handleProfileSubmit} className="settings-form" style={{ marginTop: '1rem' }}>
+              <div className="form-group">
+                <label className="form-label" htmlFor="firstName">First Name</label>
+                <input id="firstName" className="input" value={firstName} onChange={e => setFirstName(e.target.value)} required />
               </div>
-            </div>
-          </div>
+              <div className="form-group">
+                <label className="form-label" htmlFor="lastName">Last Name</label>
+                <input id="lastName" className="input" value={lastName} onChange={e => setLastName(e.target.value)} required />
+              </div>
+              <div className="form-group">
+                <label className="form-label" htmlFor="email">Email</label>
+                <input id="email" type="email" className="input" value={email} onChange={e => setEmail(e.target.value)} required />
+              </div>
+              <div className="form-group">
+                <label className="form-label" htmlFor="phone">Phone</label>
+                <input id="phone" className="input" value={phone} onChange={e => setPhone(e.target.value)} />
+              </div>
+              <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+                <button type="submit" className="btn btn-primary" disabled={profileLoading}>
+                  {profileLoading ? 'Saving...' : 'Save Profile'}
+                </button>
+                <button type="button" className="btn btn-ghost" onClick={() => setIsEditingProfile(false)} disabled={profileLoading}>
+                  Cancel
+                </button>
+              </div>
+            </form>
+          ) : (
+            <>
+              <div className="profile-details">
+                <div className="avatar-large">
+                  {user?.fullName
+                    ?.split(' ')
+                    .map((n) => n[0])
+                    .join('')
+                    .substring(0, 2) ?? 'U'}
+                </div>
+                <div className="profile-info">
+                  <h2>{user?.fullName}</h2>
+                  <p className="email">{user?.email}</p>
+                  <div className="roles-badges">
+                    {user?.roles?.map((role) => (
+                      <span key={role} className="badge badge-role">
+                        {role.replace('ROLE_', '')}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
 
-          <div className="details-list">
-            <div className="details-item">
-              <span className="label">Username</span>
-              <span className="value">{user?.username}</span>
-            </div>
-            <div className="details-item">
-              <span className="label">Employee ID</span>
-              <span className="value">{user?.employeeId ? `NEX-${String(user.employeeId).padStart(4, '0')}` : 'N/A'}</span>
-            </div>
-            <div className="details-item">
-              <span className="label">Status</span>
-              <span className="value status-active">
-                <CheckCircle2 size={14} /> Active Account
-              </span>
-            </div>
-          </div>
+              <div className="details-list">
+                <div className="details-item">
+                  <span className="label">Username</span>
+                  <span className="value">{user?.username}</span>
+                </div>
+                <div className="details-item">
+                  <span className="label">Employee ID</span>
+                  <span className="value">{user?.employeeId ? `NEX-${String(user.employeeId).padStart(4, '0')}` : 'N/A'}</span>
+                </div>
+                <div className="details-item">
+                  <span className="label">Status</span>
+                  <span className="value status-active">
+                    <CheckCircle2 size={14} /> Active Account
+                  </span>
+                </div>
+              </div>
+            </>
+          )}
         </div>
 
         {/* Change Password Card */}
