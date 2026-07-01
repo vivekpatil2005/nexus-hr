@@ -1,5 +1,5 @@
 {
-  "buildCommand": "cd frontend && npm install @rolldown/binding-linux-x64-gnu --no-save --force > /dev/null 2>&1 && tsc -b && npx vite build",
+  "buildCommand": "cd frontend && npm install @rolldown/binding-linux-x64-gnu --no-save --loglevel=error --no-fund --no-audit && npm run build",
   "outputDirectory": "frontend/dist",
   "rewrites": [
     {
@@ -7,7 +7,7 @@
       "destination": "https://nexushr-backend.onrender.com/api/:path*"
     },
     {
-      "source": "/((?!assets/|favicon.ico|vite.svg|.*\\.png|.*\\.json).*)$",
+      "source": "/(.*)",
       "destination": "/index.html"
     }
   ]
