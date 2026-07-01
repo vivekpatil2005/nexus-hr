@@ -167,6 +167,7 @@ export default function PerformancePage() {
     e.preventDefault();
     createCycleMutation.mutate({
       name: cycleName,
+      type: 'QUARTERLY',
       startDate: cycleStartDate,
       endDate: cycleEndDate,
       status: 'ACTIVE'
