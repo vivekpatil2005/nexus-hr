@@ -244,8 +244,7 @@ export default function PerformancePage() {
     setShowReviewModal(true);
   };
 
-  const handleSaveReview = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSaveReview = (status: 'DRAFT' | 'SUBMITTED') => {
     if (!selectedReview) return;
 
     submitReviewMutation.mutate({
@@ -257,7 +256,9 @@ export default function PerformancePage() {
       competencyScore: reviewCompScore,
       strengths: reviewStrengths,
       improvementAreas: reviewImprovement,
-      comments: reviewComments
+      employeeComments: selectedReview.reviewType === 'SELF' ? reviewComments : undefined,
+      managerComments: selectedReview.reviewType !== 'SELF' ? reviewComments : undefined,
+      status: status
     });
   };
 
@@ -701,7 +702,7 @@ export default function PerformancePage() {
             <h2>{selectedReview.reviewType} Performance Review</h2>
             <p className="subtitle">{selectedReview.employeeName} · {selectedReview.employeeDesignation}</p>
 
-            <form onSubmit={handleSaveReview}>
+            <form onSubmit={(e) => e.preventDefault()}>
               <div className="grid grid-cols-2" style={{ marginTop: '1rem' }}>
                 <div>
                   <label className="form-label">Goal Achievement Score (1.0 - 5.0)</label>
@@ -764,10 +765,13 @@ export default function PerformancePage() {
                 />
               </div>
 
-              <div className="modal-actions" style={{ marginTop: '1.5rem' }}>
-                <button type="button" className="btn btn-secondary" onClick={() => setShowReviewModal(false)}>Close</button>
+              <div className="modal-actions" style={{ marginTop: '1.5rem', display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
+                <button type="button" className="btn btn-ghost" onClick={() => setShowReviewModal(false)}>Cancel</button>
                 {selectedReview.status === 'DRAFT' && (
-                  <button type="submit" className="btn btn-primary" disabled={submitReviewMutation.isPending}>Submit Evaluation</button>
+                  <>
+                    <button type="button" className="btn btn-secondary" disabled={submitReviewMutation.isPending} onClick={() => handleSaveReview('DRAFT')}>Save Draft</button>
+                    <button type="button" className="btn btn-primary" disabled={submitReviewMutation.isPending} onClick={() => handleSaveReview('SUBMITTED')}>Submit Evaluation</button>
+                  </>
                 )}
               </div>
             </form>
