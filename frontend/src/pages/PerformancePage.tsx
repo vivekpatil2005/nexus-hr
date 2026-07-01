@@ -54,8 +54,8 @@ export default function PerformancePage() {
     queryFn: () => api.get<ApiResponse<ReviewCycle[]>>('/performance/cycles').then(r => r.data.data),
   });
 
-  const activeCycle = cycles?.find(c => c.status === 'ACTIVE') || cycles?.[0];
-  const currentCycleId = selectedCycleId || activeCycle?.id;
+  const activeCycle = cycles?.find((c) => c.status === 'ACTIVE' || c.status === 'EVALUATION');
+  const currentCycleId = selectedCycleId || activeCycle?.id || (cycles && cycles.length > 0 ? cycles[0].id : null);
 
   // Fetch logged in user's employee ID
   const empId = user?.employeeId || user?.id;
@@ -209,8 +209,12 @@ export default function PerformancePage() {
 
   const handleSaveGoal = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!goalTitle || !startDate || !dueDate || !currentCycleId) {
-      toast.error('Please fill in all required fields.');
+    if (!currentCycleId) {
+      toast.error('No review cycle selected. Please select or create a cycle first.');
+      return;
+    }
+    if (!goalTitle || !startDate || !dueDate) {
+      toast.error('Please fill in all required fields: Title, Start Date, and Due Date.');
       return;
     }
     saveGoalMutation.mutate({
