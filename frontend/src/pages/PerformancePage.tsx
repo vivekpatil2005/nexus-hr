@@ -144,6 +144,35 @@ export default function PerformancePage() {
     }
   });
 
+  // Create Cycle Mutation
+  const [showCycleModal, setShowCycleModal] = useState(false);
+  const [cycleName, setCycleName] = useState('');
+  const [cycleStartDate, setCycleStartDate] = useState('');
+  const [cycleEndDate, setCycleEndDate] = useState('');
+
+  const createCycleMutation = useMutation({
+    mutationFn: (cycleData: any) => api.post<ApiResponse<ReviewCycle>>('/performance/cycles', cycleData),
+    onSuccess: () => {
+      toast.success('Performance cycle created successfully!');
+      setShowCycleModal(false);
+      setCycleName('');
+      setCycleStartDate('');
+      setCycleEndDate('');
+      queryClient.invalidateQueries({ queryKey: ['reviewCycles'] });
+    },
+    onError: (err: any) => toast.error(err.response?.data?.message || 'Failed to create cycle')
+  });
+
+  const handleCreateCycle = (e: React.FormEvent) => {
+    e.preventDefault();
+    createCycleMutation.mutate({
+      name: cycleName,
+      startDate: cycleStartDate,
+      endDate: cycleEndDate,
+      status: 'ACTIVE'
+    });
+  };
+
   // Submit Feedback Mutation
   const submitFeedbackMutation = useMutation({
     mutationFn: (feedbackData: any) => api.post<ApiResponse<PeerFeedback>>('/performance/feedbacks', feedbackData),
@@ -300,6 +329,11 @@ export default function PerformancePage() {
                 </option>
               ))}
             </select>
+          )}
+          {(hasRole('ROLE_ADMIN') || hasRole('ROLE_HR_MANAGER')) && (
+            <button className="btn btn-secondary" onClick={() => setShowCycleModal(true)}>
+              + Create Cycle
+            </button>
           )}
           {activeTab === 'goals' && (
             <button className="btn btn-primary" onClick={() => { setEditingGoal(null); resetGoalForm(); setShowGoalModal(true); }}>
@@ -798,8 +832,8 @@ export default function PerformancePage() {
                 />
               </div>
 
-              <div style={{ marginTop: '1.5rem' }}>
-                <label className="form-label">Rating (1.0 - 5.0)</label>
+              <div style={{ marginTop: '1rem' }}>
+                <label className="form-label">Overall Rating (1.0 - 5.0)</label>
                 <input
                   type="number"
                   step="0.1"
@@ -808,54 +842,95 @@ export default function PerformancePage() {
                   className="input"
                   value={feedbackRating}
                   onChange={(e) => setFeedbackRating(Number(e.target.value))}
+                  required
                 />
               </div>
 
               <div style={{ marginTop: '1rem' }}>
-                <label className="form-label">Strengths</label>
+                <label className="form-label">Strengths observed</label>
                 <textarea
                   className="textarea"
                   value={feedbackStrengths}
                   onChange={(e) => setFeedbackStrengths(e.target.value)}
-                  placeholder="What did they do exceptionally well?"
+                  placeholder="What does this person do well?"
                 />
               </div>
 
               <div style={{ marginTop: '1rem' }}>
-                <label className="form-label">Areas for Improvement</label>
+                <label className="form-label">Constructive suggestions</label>
                 <textarea
                   className="textarea"
                   value={feedbackImprovement}
                   onChange={(e) => setFeedbackImprovement(e.target.value)}
-                  placeholder="What skills should they focus on developing?"
+                  placeholder="How could they improve?"
                 />
               </div>
 
               <div style={{ marginTop: '1rem' }}>
-                <label className="form-label">Comments</label>
-                <textarea
-                  className="textarea"
-                  value={feedbackComments}
-                  onChange={(e) => setFeedbackComments(e.target.value)}
-                  placeholder="General notes..."
-                />
-              </div>
-
-              <div style={{ marginTop: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <input
-                  type="checkbox"
-                  id="anonymousCheck"
-                  checked={feedbackAnonymous}
-                  onChange={(e) => setFeedbackAnonymous(e.target.checked)}
-                />
-                <label htmlFor="anonymousCheck" style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)' }}>
-                  Submit anonymously
+                <label className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    checked={feedbackAnonymous}
+                    onChange={(e) => setFeedbackAnonymous(e.target.checked)}
+                  />
+                  Submit Anonymously
                 </label>
               </div>
 
               <div className="modal-actions" style={{ marginTop: '1.5rem' }}>
                 <button type="button" className="btn btn-secondary" onClick={() => setShowFeedbackModal(false)}>Cancel</button>
                 <button type="submit" className="btn btn-primary" disabled={submitFeedbackMutation.isPending}>Submit Feedback</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Create Cycle Modal */}
+      {showCycleModal && (
+        <div className="modal-overlay">
+          <div className="modal-content card">
+            <h2>Create Review Cycle</h2>
+            <p className="subtitle">Initialize a new performance review period for the company.</p>
+            <form onSubmit={handleCreateCycle}>
+              <div style={{ marginTop: '1rem' }}>
+                <label className="form-label">Cycle Name *</label>
+                <input
+                  type="text"
+                  className="input"
+                  placeholder="e.g. Q3 2026 Performance Review"
+                  value={cycleName}
+                  onChange={(e) => setCycleName(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="grid grid-cols-2" style={{ marginTop: '1rem' }}>
+                <div>
+                  <label className="form-label">Start Date *</label>
+                  <input
+                    type="date"
+                    className="input"
+                    value={cycleStartDate}
+                    onChange={(e) => setCycleStartDate(e.target.value)}
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="form-label">End Date *</label>
+                  <input
+                    type="date"
+                    className="input"
+                    value={cycleEndDate}
+                    onChange={(e) => setCycleEndDate(e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
+              <div className="modal-actions" style={{ marginTop: '1.5rem', display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
+                <button type="button" className="btn btn-ghost" onClick={() => setShowCycleModal(false)}>Cancel</button>
+                <button type="submit" className="btn btn-primary" disabled={createCycleMutation.isPending}>
+                  {createCycleMutation.isPending ? 'Creating...' : 'Create Cycle'}
+                </button>
               </div>
             </form>
           </div>
