@@ -1,5 +1,5 @@
 databases:
-  - name: nexushr-db
+  - name: nexushr-db-2
     databaseName: nexushr
     user: nexushr
     plan: free
@@ -24,23 +24,23 @@ services:
       # Database connection configuration (Spring combines these via properties placeholders)
       - key: SPRING_DATASOURCE_HOST
         fromDatabase:
-          name: nexushr-db
+          name: nexushr-db-2
           property: host
       - key: SPRING_DATASOURCE_PORT
         fromDatabase:
-          name: nexushr-db
+          name: nexushr-db-2
           property: port
       - key: SPRING_DATASOURCE_DB
         fromDatabase:
-          name: nexushr-db
+          name: nexushr-db-2
           property: database
       - key: SPRING_DATASOURCE_USERNAME
         fromDatabase:
-          name: nexushr-db
+          name: nexushr-db-2
           property: user
       - key: SPRING_DATASOURCE_PASSWORD
         fromDatabase:
-          name: nexushr-db
+          name: nexushr-db-2
           property: password
       # Redis Connection properties
       - key: SPRING_DATA_REDIS_HOST
